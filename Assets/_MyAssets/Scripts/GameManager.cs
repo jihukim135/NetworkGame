@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject flagObject;
 
     [SerializeField] private Text scoreText;
-    [SerializeField] private GameObject gameOverText;
+    [SerializeField] private GameObject timeOutText;
     [SerializeField] private Text finalScoreText;
 
     private bool _isGameOver = false;
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         scoreText.gameObject.SetActive(true);
-        gameOverText.SetActive(false);
+        timeOutText.SetActive(false);
     }
 
     void Update()
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
     {
         _isGameOver = true;
         scoreText.gameObject.SetActive(false);
-        gameOverText.SetActive(true);
+        timeOutText.SetActive(true);
         finalScoreText.text = $"YOUR SCORE IS: <color=yellow>{Score}</color>";
     }
 

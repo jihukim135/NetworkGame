@@ -155,7 +155,7 @@ MonoBehaviour:
   carObject: {fileID: 1824668037}
   flagObject: {fileID: 0}
   scoreText: {fileID: 467094581}
-  gameOverText: {fileID: 1214279855}
+  timeOutText: {fileID: 1214279855}
   finalScoreText: {fileID: 724704536}
   endGameForDebug: 0
 --- !u!4 &36467935
@@ -411,7 +411,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 353652079}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.570818, y: -4.802139, z: 1.0402702}
+  m_LocalPosition: {x: 0, y: -5, z: 0}
   m_LocalScale: {x: 13.888547, y: 0.78125, z: 1}
   m_Children: []
   m_Father: {fileID: 1207243912}
@@ -579,7 +579,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.87058824, g: 0.85882354, b: 0.8235294, a: 1}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -792,7 +792,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1207243911}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.570818, y: -0.2078612, z: -1.0402702}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1550169510}
@@ -813,7 +813,7 @@ GameObject:
   - component: {fileID: 1214279858}
   - component: {fileID: 1214279857}
   m_Layer: 5
-  m_Name: GameOverText
+  m_Name: TimeOutText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -888,7 +888,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 0.64
-  m_Text: GAME OVER
+  m_Text: TIME OUT!
 --- !u!222 &1214279859
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -954,12 +954,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8c32fa98bec7066409903e67582f2d73, type: 3}
+  m_Sprite: {fileID: -7443756053782179069, guid: 8c32fa98bec7066409903e67582f2d73, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 14.36, y: 3.12}
+  m_Size: {x: 5.54, y: 3.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -973,8 +973,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1550169508}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.580017, y: 0.46646118, z: 1.0402702}
-  m_LocalScale: {x: 3.0486937, y: 3.0486937, z: 3.0486937}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3.3, y: 3.3, z: 3.3}
   m_Children: []
   m_Father: {fileID: 1207243912}
   m_RootOrder: 0
