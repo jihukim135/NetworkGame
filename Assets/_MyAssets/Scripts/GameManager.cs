@@ -10,15 +10,21 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private bool endGameForDebug = false;
+
     [SerializeField] private GameObject carObject;
     [SerializeField] private GameObject flagObject;
 
     [SerializeField] private Text scoreText;
+    [SerializeField] private Text timeLeftText;
     [SerializeField] private GameObject timeOutText;
     [SerializeField] private Text finalScoreText;
 
+    private StringBuilder _timeLeftBuilder = new StringBuilder(64);
+
     private bool _isGameOver = false;
     public bool IsGameOver => _isGameOver;
+
     private int _score = 0;
 
     private int Score
@@ -36,10 +42,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private float _timeLimit = 60f;
+    private float _timeLimit = 40f;
     private float _timer = 0f;
-
-    [SerializeField] private bool endGameForDebug = false;
 
     private static GameManager _instance;
 
@@ -70,7 +74,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         scoreText.gameObject.SetActive(true);
+        timeLeftText.gameObject.SetActive(true);
         timeOutText.SetActive(false);
+
+        _timeLeftBuilder.Append($"TIME LEFT: {_timeLimit:f1}");
+        timeLeftText.text = _timeLeftBuilder.ToString();
     }
 
     void Update()
@@ -82,7 +90,7 @@ public class GameManager : MonoBehaviour
                 EndGame();
             }
 
-            CheckTimeLeft();
+            CheckTimeLeftAndSetText();
             return;
         }
 
@@ -92,7 +100,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CheckTimeLeft()
+    private void CheckTimeLeftAndSetText()
     {
         if (_timer > _timeLimit)
         {
@@ -101,12 +109,16 @@ public class GameManager : MonoBehaviour
         }
 
         _timer += Time.deltaTime;
+        _timeLeftBuilder.Clear();
+        _timeLeftBuilder.Append($"TIME LEFT: {_timeLimit - _timer:f1}");
+        timeLeftText.text = _timeLeftBuilder.ToString();
     }
 
     private void EndGame()
     {
         _isGameOver = true;
         scoreText.gameObject.SetActive(false);
+        timeLeftText.gameObject.SetActive(false);
         timeOutText.SetActive(true);
         finalScoreText.text = $"YOUR SCORE IS: <color=yellow>{Score}</color>";
     }

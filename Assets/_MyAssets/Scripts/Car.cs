@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Camera;
-using Debug = System.Diagnostics.Debug;
 
 public class Car : MonoBehaviour
 {
@@ -19,7 +16,7 @@ public class Car : MonoBehaviour
 
     void Start()
     {
-        _camera = main;
+        _camera = Camera.main;
         _audioSource = GetComponent<AudioSource>();
         _gameManager = GameManager.Instance;
     }

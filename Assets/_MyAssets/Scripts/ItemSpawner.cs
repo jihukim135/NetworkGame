@@ -62,7 +62,6 @@ public class ItemSpawner : MonoBehaviour
 
         while (_pooledItems[index].activeSelf)
         {
-            Debug.Log("RE-ROLL");
             index = Random.Range(0, TotalPooledItemsCount);
         }
 
