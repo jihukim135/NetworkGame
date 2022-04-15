@@ -15,7 +15,7 @@ public class ItemSpawner : MonoBehaviour
     private const int TotalPooledItemsCount = ChestsCount + RedCoinsCount + GoldCoinsCount;
     private GameObject[] _pooledItems = new GameObject[TotalPooledItemsCount];
 
-    private Vector2 _initialPosition;
+    private Vector2 _initialPosition = new Vector2(0f, 7f);
     [SerializeField] private float spawnInterval = 1f;
 
     private void Start()
@@ -37,8 +37,6 @@ public class ItemSpawner : MonoBehaviour
             _pooledItems[i] = Instantiate(chestPrefab);
             _pooledItems[i].SetActive(false);
         }
-
-        _initialPosition = Vector2.zero;
 
         StartCoroutine(StartSpawner());
     }

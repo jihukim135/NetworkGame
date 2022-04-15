@@ -6,19 +6,22 @@ using UnityEngine.UI;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject carObject;
     [SerializeField] private GameObject flagObject;
     [SerializeField] private Text scoreText;
+    [SerializeField] private GameObject gameOverText;
 
-    private float _distanceLeft;
     private bool _isGameOver = false;
     public bool IsGameOver => _isGameOver;
     private int _score = 0;
     private float _timeLimit = 60f;
     private float _timer = 0f;
+
+    [SerializeField] private bool endGameForDebug = false;
 
     private static GameManager _instance;
 
@@ -48,19 +51,28 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (_isGameOver)
+        if (!_isGameOver)
         {
+            if (endGameForDebug)
+            {
+                EndGame();
+            }
+
+            CheckTimeLeft();
             return;
         }
 
-        CheckTimeLeft();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     private void CheckTimeLeft()
     {
         if (_timer > _timeLimit)
         {
-            _isGameOver = true;
+            EndGame();
             return;
         }
 
@@ -69,10 +81,11 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
+        _isGameOver = true;
         scoreText.gameObject.SetActive(false);
-        
+        gameOverText.SetActive(true);
     }
-    
+
     public void UpdateScoreAndSetText(EItem itemType)
     {
         switch (itemType)

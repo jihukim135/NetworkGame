@@ -23,12 +23,10 @@ public class Car : MonoBehaviour
 
     void Update()
     {
-        if (_gameManager.IsGameOver)
+        if (!_gameManager.IsGameOver)
         {
-            return;
+            CheckInputAndMove();
         }
-
-        CheckInputAndMove();
 
         // if (!_gameManager.IsGameOver && _isMoving && _speed < 0.05f)
         // {
