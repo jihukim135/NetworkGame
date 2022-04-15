@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private bool endGameForDebug = false;
@@ -19,6 +20,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Text timeLeftText;
     [SerializeField] private GameObject timeOutText;
     [SerializeField] private Text finalScoreText;
+
+    [SerializeField] private AudioClip badItemClip;
+    [SerializeField] private AudioClip goodItemClip;
+    private AudioSource _audioSource;
 
     private StringBuilder _timeLeftBuilder = new StringBuilder(64);
 
@@ -79,6 +84,8 @@ public class GameManager : MonoBehaviour
 
         _timeLeftBuilder.Append($"TIME LEFT: {_timeLimit:f1}");
         timeLeftText.text = _timeLeftBuilder.ToString();
+
+        _audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -123,18 +130,21 @@ public class GameManager : MonoBehaviour
         finalScoreText.text = $"YOUR SCORE IS: <color=yellow>{Score}</color>";
     }
 
-    public void UpdateScoreAndSetText(EItem itemType)
+    public void UpdateScoreAndPlaySound(EItem itemType)
     {
         switch (itemType)
         {
             case EItem.GoldCoin:
                 Score += 1;
+                _audioSource.clip = goodItemClip;
                 break;
             case EItem.RedCoin:
                 Score -= 3;
+                _audioSource.clip = badItemClip;
                 break;
             case EItem.Chest:
                 Score += 5;
+                _audioSource.clip = goodItemClip;
                 break;
             default:
                 Debug.Assert(false);
@@ -142,6 +152,7 @@ public class GameManager : MonoBehaviour
         }
 
         scoreText.text = $"SCORE: {Score}";
+        _audioSource.Play();
     }
 
     private float GetDistanceLeft()

@@ -23,6 +23,6 @@ public class Item : MonoBehaviour
     {
         Debug.Log(col.gameObject.name);
         gameObject.SetActive(false);
-        GameManager.Instance.UpdateScoreAndSetText(itemType);
+        GameManager.Instance.UpdateScoreAndPlaySound(itemType);
     }
 }
