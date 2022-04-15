@@ -18,6 +18,22 @@ public class GameManager : MonoBehaviour
     private bool _isGameOver = false;
     public bool IsGameOver => _isGameOver;
     private int _score = 0;
+
+    private int Score
+    {
+        get => _score;
+        set
+        {
+            if (value < 0)
+            {
+                _score = 0;
+                return;
+            }
+
+            _score = value;
+        }
+    }
+
     private float _timeLimit = 60f;
     private float _timer = 0f;
 
@@ -91,20 +107,20 @@ public class GameManager : MonoBehaviour
         switch (itemType)
         {
             case EItem.GoldCoin:
-                _score += 1;
+                Score += 1;
                 break;
             case EItem.RedCoin:
-                _score -= 1;
+                Score -= 3;
                 break;
             case EItem.Chest:
-                _score += 5;
+                Score += 5;
                 break;
             default:
                 Debug.Assert(false);
                 break;
         }
 
-        scoreText.text = $"SCORE: {_score}";
+        scoreText.text = $"SCORE: {Score}";
     }
 
     private float GetDistanceLeft()
