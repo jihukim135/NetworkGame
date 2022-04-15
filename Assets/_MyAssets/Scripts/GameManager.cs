@@ -12,8 +12,10 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject carObject;
     [SerializeField] private GameObject flagObject;
+
     [SerializeField] private Text scoreText;
     [SerializeField] private GameObject gameOverText;
+    [SerializeField] private Text finalScoreText;
 
     private bool _isGameOver = false;
     public bool IsGameOver => _isGameOver;
@@ -65,6 +67,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        scoreText.gameObject.SetActive(true);
+        gameOverText.SetActive(false);
+    }
+
     void Update()
     {
         if (!_isGameOver)
@@ -100,6 +108,7 @@ public class GameManager : MonoBehaviour
         _isGameOver = true;
         scoreText.gameObject.SetActive(false);
         gameOverText.SetActive(true);
+        finalScoreText.text = $"YOUR SCORE IS: <color=yellow>{Score}</color>";
     }
 
     public void UpdateScoreAndSetText(EItem itemType)
