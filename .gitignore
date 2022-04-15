@@ -1,0 +1,7 @@
+Library/
+Temp/
+UserSettings/
+Logs/
+obj/
+Assembly-Csharp.csproj
+NetworkGame.sln
