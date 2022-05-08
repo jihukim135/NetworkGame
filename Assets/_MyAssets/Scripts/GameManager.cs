@@ -1,34 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine.SceneManagement;
+using System.Threading;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private bool endGameForDebug = false;
 
-    [SerializeField] private GameObject carObject;
-    [SerializeField] private GameObject flagObject;
-
     [SerializeField] private Text scoreText;
     [SerializeField] private Text timeLeftText;
     [SerializeField] private GameObject timeOutText;
     [SerializeField] private Text finalScoreText;
+    [SerializeField] private InputField nameInputField;
+
+    private static int _rankCount = 10;
+    [SerializeField] private GameObject rankingObject;
+    [SerializeField] private Text namesText;
+    [SerializeField] private Text scoresText;
+    private string[] _names = new string[_rankCount];
+    private int[] _scores = new int[_rankCount];
+    private string _userName;
 
     [SerializeField] private AudioClip badItemClip;
     [SerializeField] private AudioClip goodItemClip;
     private AudioSource _audioSource;
 
     private StringBuilder _timeLeftBuilder = new StringBuilder(64);
+    private byte[] _receivedBytes = new byte[1024]; // 서버 통신용
 
-    private bool _isGameOver = false;
-    public bool IsGameOver => _isGameOver;
+    public bool IsGameOver { get; set; } = false;
 
     private int _score = 0;
 
@@ -86,11 +94,12 @@ public class GameManager : MonoBehaviour
         timeLeftText.text = _timeLeftBuilder.ToString();
 
         _audioSource = GetComponent<AudioSource>();
+        rankingObject.SetActive(false);
     }
 
     void Update()
     {
-        if (!_isGameOver)
+        if (!IsGameOver)
         {
             if (endGameForDebug)
             {
@@ -98,6 +107,7 @@ public class GameManager : MonoBehaviour
             }
 
             CheckTimeLeftAndSetText();
+
             return;
         }
 
@@ -123,14 +133,15 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        _isGameOver = true;
+        IsGameOver = true;
         scoreText.gameObject.SetActive(false);
         timeLeftText.gameObject.SetActive(false);
         timeOutText.SetActive(true);
+
         finalScoreText.text = $"YOUR SCORE IS: <color=yellow>{Score}</color>";
     }
 
-    public void UpdateScoreAndPlaySound(EItem itemType)
+    public void UpdateScore(EItem itemType)
     {
         switch (itemType)
         {
@@ -155,30 +166,85 @@ public class GameManager : MonoBehaviour
         _audioSource.Play();
     }
 
-    private float GetDistanceLeft()
+    public void OnClickSendScoreAndGetRanks()
     {
-        return flagObject.transform.position.x - carObject.transform.position.x;
-    }
-
-    public void UpdateDistanceFromServer()
-    {
-        try
+        if (nameInputField.text == string.Empty)
         {
-            using Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            byte[] buffer = Encoding.UTF8.GetBytes($"{GetDistanceLeft()}");
+            return;
+        }
+
+        _userName = nameInputField.text;
+        nameInputField.text = string.Empty;
+
+        timeOutText.SetActive(false);
+
+        using (Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes($"{_userName},{_score}");
 
             EndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, 10200);
             clientSocket.SendTo(buffer, serverEndPoint);
 
-            byte[] receivedBytes = new byte[1024];
-            int numberReceived = clientSocket.ReceiveFrom(receivedBytes, ref serverEndPoint);
-            string text = Encoding.UTF8.GetString(receivedBytes, 0, numberReceived);
-
+            // 랭킹을 받아옴
+            int numberReceived = clientSocket.ReceiveFrom(_receivedBytes, ref serverEndPoint);
+            string text = Encoding.UTF8.GetString(_receivedBytes, 0, numberReceived);
             Debug.Log(text);
+
+            // 파싱해서 저장
+            char[] newLineDelimiters = {'\n', '\r'};
+            string[] lines = text.Split(newLineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] temp = lines[i].Split(',');
+                _names[i] = temp[0];
+                if (!int.TryParse(temp[1], out _scores[i]))
+                {
+                    Debug.LogError("Parse failed");
+                }
+            }
         }
-        catch (Exception e)
+
+        ShowRanks();
+    }
+
+    private void ShowRanks()
+    {
+        rankingObject.SetActive(true);
+        StringBuilder rankBuilder = new StringBuilder(512);
+
+        rankBuilder.AppendLine("<color=yellow>name</color>");
+        for (int i = 0; i < _rankCount; i++)
         {
-            Debug.LogException(e);
+            if (string.IsNullOrEmpty(_names[i]))
+            {
+                break;
+            }
+
+            if (_names[i] == _userName)
+            {
+                rankBuilder.AppendLine($"<color=yellow>{_names[i]}</color>");
+            }
+            else
+            {
+                rankBuilder.AppendLine($"{_names[i]}");
+            }
         }
+
+        namesText.text = rankBuilder.ToString();
+
+        rankBuilder.Clear();
+        rankBuilder.AppendLine("<color=yellow>score</color>");
+        for (int i = 0; i < _rankCount; i++)
+        {
+            if (_scores[i] == 0)
+            {
+                break;
+            }
+
+            rankBuilder.AppendLine($"{_scores[i]}");
+        }
+
+        scoresText.text = rankBuilder.ToString();
     }
 }

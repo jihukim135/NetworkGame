@@ -1,8 +1,10 @@
-using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class Car : MonoBehaviour
 {
+    public int ID { get; set; }
     private float _speed = 0f;
     private const float SpeedDecreaseRate = 0.96f;
 
@@ -14,26 +16,44 @@ public class Car : MonoBehaviour
     private GameManager _gameManager;
     private Camera _camera;
 
+    [SerializeField] private bool autoMode;
+    private Vector3 _autoPosition;
+
     void Start()
     {
         _camera = Camera.main;
         _audioSource = GetComponent<AudioSource>();
         _gameManager = GameManager.Instance;
+        _autoPosition = new Vector3(0.01f, 0f, 0f);
     }
 
     void Update()
     {
-        if (!_gameManager.IsGameOver)
+        if (_gameManager.IsGameOver)
         {
-            CheckInputAndMove();
-            ClampPositionOutOfCamera();
+            return;
         }
 
-        // if (!_gameManager.IsGameOver && _isMoving && _speed < 0.05f)
-        // {
-        //     _gameManager.UpdateDistanceFromServer();
-        //     _isMoving = false;
-        // }
+        if (autoMode)
+        {
+            MoveAuto();
+        }
+        else
+        {
+            CheckInputAndMove();
+        }
+
+        ClampPositionOutOfCamera();
+    }
+
+    private void MoveAuto()
+    {
+        if (transform.position.x < -7f || transform.position.x > 7f)
+        {
+            _autoPosition *= -1f;
+        }
+
+        transform.Translate(_autoPosition);
     }
 
     private void CheckInputAndMove()
