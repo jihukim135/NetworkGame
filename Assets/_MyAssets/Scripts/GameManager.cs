@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 using System.Threading;
 
 [RequireComponent(typeof(AudioSource))]
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private bool endGameForDebug = false;
 
@@ -57,32 +57,6 @@ public class GameManager : MonoBehaviour
 
     private float _timeLimit = 40f;
     private float _timer = 0f;
-
-    private static GameManager _instance;
-
-    public static GameManager Instance
-    {
-        get
-        {
-            Init();
-            return _instance;
-        }
-    }
-
-    private static void Init()
-    {
-        if (_instance == null)
-        {
-            GameObject go = GameObject.FindWithTag("GameManager");
-            if (go == null)
-            {
-                Debug.Log("GameManager not found");
-                return;
-            }
-
-            _instance = go.GetComponent<GameManager>();
-        }
-    }
 
     private void Awake()
     {

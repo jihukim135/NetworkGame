@@ -4,8 +4,8 @@ using Debug = UnityEngine.Debug;
 
 public class Car : MonoBehaviour
 {
-    public int ID { get; set; }
-    private float _speed = 0f;
+    private float _totalSpeed;
+    [SerializeField] private float speed;
     private const float SpeedDecreaseRate = 0.96f;
 
     private Vector2 _startPosition;
@@ -16,15 +16,11 @@ public class Car : MonoBehaviour
     private GameManager _gameManager;
     private Camera _camera;
 
-    [SerializeField] private bool autoMode;
-    private Vector3 _autoPosition;
-
     void Start()
     {
         _camera = Camera.main;
         _audioSource = GetComponent<AudioSource>();
         _gameManager = GameManager.Instance;
-        _autoPosition = new Vector3(0.01f, 0f, 0f);
     }
 
     void Update()
@@ -34,44 +30,28 @@ public class Car : MonoBehaviour
             return;
         }
 
-        if (autoMode)
-        {
-            MoveAuto();
-        }
-        else
-        {
-            CheckInputAndMove();
-        }
+        CheckInputAndMove();
 
         ClampPositionOutOfCamera();
     }
 
-    private void MoveAuto()
-    {
-        if (transform.position.x < -7f || transform.position.x > 7f)
-        {
-            _autoPosition *= -1f;
-        }
-
-        transform.Translate(_autoPosition);
-    }
 
     private void CheckInputAndMove()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _startPosition = Input.mousePosition;
+            _startPosition =  _camera.ScreenToWorldPoint(Input.mousePosition);
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            _endPosition = Input.mousePosition;
-            _speed = (_endPosition.x - _startPosition.x) / 5000f;
+            _endPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+            _totalSpeed = (_endPosition.x - _startPosition.x) * speed;
 
             _audioSource.Play();
         }
 
-        transform.Translate(_speed, 0, 0);
-        _speed *= SpeedDecreaseRate;
+        transform.Translate(_totalSpeed, 0, 0);
+        _totalSpeed *= SpeedDecreaseRate;
     }
 
     private void ClampPositionOutOfCamera()
